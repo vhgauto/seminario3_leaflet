@@ -1,0 +1,196 @@
+---
+title: "Interactive maps"
+format: 
+  html:
+    embed-resources: true
+    code-fold: true
+    code-link: true
+    code-summary: Show code
+execute: 
+  echo: true
+  eval: true
+  warning: false
+---
+
+::: {.panel-tabset}
+
+## `ggiraph`
+
+```{r}
+library(ggiraph)
+library(ggplot2)
+library(showtext)
+library(ggtext)
+library(glue)
+
+font_add_google(name = "Tinos", family = "tinos")
+showtext_auto()
+showtext_opts(dpi = 300)
+
+arg_s <- sf::st_read("vector/arg_simp.gpkg", quiet = TRUE)
+
+p <- ggplot() +
+  geom_sf_interactive(
+    data = arg_s,
+    aes(
+      tooltip = Provincia,
+      data_id = Provincia,
+      onclick = sprintf(
+        "window.open(\"http://es.wikipedia.org/wiki/%s\")",
+        paste0("Provincia_de_", gsub(" ", "_", Provincia))
+      ),
+    ),
+    fill = "#75aee0",
+    color = "#e5e5e5"
+  ) +
+  annotate(
+    geom = "richtext",
+    x = I(c(-1.7, -1.7, -1.7)),
+    y = I(c(.9, .8, .1)),
+    hjust = 0,
+    label = c(
+      "República <b style='color: #75aee0;'>Argentina</b>",
+      "Click en cualquier provincia para<br>visitar su página en **Wikipedia**",
+      "**Víctor Gauto | @vhgauto**"
+    ),
+    fill = c(NA, NA, "#75aee0"),
+    label.color = NA,
+    label.r = unit(0, "line"),
+    size = c(7, 4, 3),
+    color = c("black", "black", "white"),
+    family = "tinos"
+  ) +
+  coord_sf(clip = "off") +
+  theme_void(base_family = "tinos") +
+  theme_sub_plot(
+    margin = margin(r = -300),
+    title = element_text(hjust = 0),
+    subtitle = ggtext::element_markdown()
+  )
+
+girafe(
+  ggobj = p,
+  bg = "#e5e5e5",
+  options = list(
+    opts_tooltip(
+      css = glue(
+        "background-color:white;color:black;padding:5px;",
+        "font-weight:bold;font-size:15pt;border-radius:0px;",
+        "border-style:solid;border-color:black;border-width:1px;",
+        "font-family:Lato;"
+      ),
+      opacity = 1
+    ),
+    opts_hover(
+      css = girafe_css(
+        css = "",
+        area = glue("fill:#f6b40e;")
+      )
+    ),
+    opts_hover_inv(css = "opacity:1"),
+    opts_toolbar(saveaspng = FALSE)
+  )
+)
+```
+
+## `terra`
+
+```{r}
+library(terra)
+
+v <- vect("vector/arg.gpkg")
+
+plet(
+  v,
+  col = "#74acdf",
+  border = "white",
+  lwd = 2,
+  alpha = 1
+)
+```
+
+## `leaflet`
+
+```{r}
+library(leaflet)
+library(leafem)
+library(leaflet.extras)
+
+arg <- sf::st_read("vector/arg.gpkg", quiet = TRUE)
+
+leaflet(arg) |>
+  setView(
+    lng = -67.21083,
+    lat = -40.41021,
+    zoom = 4
+  ) |>
+  addTiles(group = "OSM (default)") |>
+  addProviderTiles(
+    providers$CartoDB.Positron,
+    group = "Positron (minimal)"
+  ) |>
+  addProviderTiles(
+    providers$Esri.WorldImagery,
+    group = "World Imagery (satellite)"
+  ) |>
+  addPolygons(
+    fillColor = "#75aee0",
+    fillOpacity = 1,
+    stroke = TRUE,
+    weight = .6,
+    color = "white",
+    opacity = 1,
+    label = ~ paste0(
+      "Provincia: ",
+      Provincia
+    ),
+    group = "Provincias de Argentina",
+    highlightOptions = highlightOptions(
+      fillColor = "#f6b40e"
+    )
+  ) |>
+  addFullscreenControl(
+    position = "bottomright"
+  ) |>
+  addLogo(
+    img = "img/ig.png",
+    url = "https://ig.conae.unc.edu.ar/",
+    width = round(330 / 3),
+    height = round(90 / 3),
+    position = "bottomleft"
+  ) |>
+  addResetMapButton() |>
+  addLayersControl(
+    baseGroups = c(
+      "OSM (default)",
+      "Positron (minimal)",
+      "World Imagery (satellite)"
+    ),
+    overlayGroups = "Provincias de Argentina",
+    options = layersControlOptions(
+      collapsed = FALSE,
+      position = "topright"
+    )
+  )
+```
+
+## `tmap`
+
+```{r}
+library(tmap)
+library(tmap.mapgl)
+
+tmap_mode("maplibre")
+
+tm_shape(arg) +
+  tm_polygons(
+    lwd = 2,
+    fill = "#75aee0",
+    hover = "Provincia",
+    popup.vars = FALSE,
+    col = "white"
+  ) +
+  tm_fullscreen()
+```
+
+:::
