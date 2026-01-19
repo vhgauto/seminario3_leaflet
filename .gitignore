@@ -1,3 +1,7 @@
+*.html
+vector/
+.vscode/
+
 # History files
 .Rhistory
 .Rapp.history
