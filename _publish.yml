@@ -1,0 +1,4 @@
+- source: index.qmd
+  quarto-pub:
+    - id: 154e399f-5626-446a-b6a8-1ed50b12de1e
+      url: https://vhgauto.quarto.pub/mapas_interactivos
