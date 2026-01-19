@@ -1,11 +1,18 @@
 ---
 title: "Interactive maps"
+subtitle: Part of **MS Víctor Gauto** [seminar](https://vhgauto.github.io/seminario3-gulich/) for Gulich Institute
 format: 
   html:
     embed-resources: true
     code-fold: true
     code-link: true
     code-summary: Show code
+    page-layout: full
+    backgroundcolor: "#f7f7f7"
+    link-external-newwindow: true
+    include-in-header:
+      - text: |
+          <link rel="shortcut icon" href="img/favicon.jpg" />      
 execute: 
   echo: true
   eval: true
@@ -192,5 +199,14 @@ tm_shape(arg) +
   ) +
   tm_fullscreen()
 ```
+
+:::
+
+<br>
+<br>
+
+::: {style='text-align: right;'}
+
+Ver en [![](https://api.iconify.design/mdi/github.svg){width=1.3em}](https://github.com/vhgauto/seminario3_leaflet).
 
 :::
