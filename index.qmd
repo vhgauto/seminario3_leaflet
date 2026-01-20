@@ -19,6 +19,8 @@ execute:
   warning: false
 ---
 
+:::: {.column-screen-inset}
+
 ::: {.panel-tabset}
 
 ## `ggiraph`
@@ -48,7 +50,8 @@ p <- ggplot() +
       ),
     ),
     fill = "#75aee0",
-    color = "#e5e5e5"
+    color = "#e5e5e5",
+    linewidth = 15
   ) +
   annotate(
     geom = "richtext",
@@ -57,26 +60,29 @@ p <- ggplot() +
     hjust = 0,
     label = c(
       "República <b style='color: #75aee0;'>Argentina</b>",
-      "Click en cualquier provincia para<br>visitar su página en **Wikipedia**",
+      "Click en cualquier provincia para<br>visitar su página en <b style='color: #f6b40e'>Wikipedia</b>",
       "**Víctor Gauto | @vhgauto**"
     ),
     fill = c(NA, NA, "#75aee0"),
     label.color = NA,
     label.r = unit(0, "line"),
-    size = c(7, 4, 3),
-    color = c("black", "black", "white"),
+    label.padding = unit(20, "lines"),
+    size = c(800, 500, 300),
+    color = c("black", "black", "black"),
     family = "tinos"
   ) +
   coord_sf(clip = "off") +
   theme_void(base_family = "tinos") +
   theme_sub_plot(
-    margin = margin(r = -300),
+    margin = margin(l = 25000),
     title = element_text(hjust = 0),
     subtitle = ggtext::element_markdown()
   )
 
 girafe(
   ggobj = p,
+  width_svg = 1500,
+  height_svg = 600,
   bg = "#e5e5e5",
   options = list(
     opts_tooltip(
@@ -210,3 +216,5 @@ tm_shape(arg) +
 Ver en [![](https://api.iconify.design/mdi/github.svg){width=1.3em}](https://github.com/vhgauto/seminario3_leaflet).
 
 :::
+
+::::
