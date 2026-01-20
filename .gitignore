@@ -1,6 +1,7 @@
 *.html
 vector/
 .vscode/
+test*
 
 # History files
 .Rhistory
