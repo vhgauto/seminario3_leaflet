@@ -9,6 +9,8 @@ format:
     code-summary: Show code
     page-layout: full
     backgroundcolor: "#f7f7f7"
+    theme:
+      - extras/mis_estilos.scss
     link-external-newwindow: true
     include-in-header:
       - text: |
@@ -17,6 +19,8 @@ execute:
   echo: true
   eval: true
   warning: false
+editor_options: 
+  chunk_output_type: console
 ---
 
 :::: {.column-screen-inset}
@@ -36,11 +40,11 @@ font_add_google(name = "Tinos", family = "tinos")
 showtext_auto()
 showtext_opts(dpi = 300)
 
-arg_s <- sf::st_read("vector/arg_simp.gpkg", quiet = TRUE)
+arg <- sf::st_read("vector/arg_simp.gpkg", quiet = TRUE)
 
 p <- ggplot() +
   geom_sf_interactive(
-    data = arg_s,
+    data = arg,
     aes(
       tooltip = Provincia,
       data_id = Provincia,
@@ -111,10 +115,8 @@ girafe(
 ```{r}
 library(terra)
 
-v <- vect("vector/arg.gpkg")
-
 plet(
-  v,
+  vect(arg),
   col = "#74acdf",
   border = "white",
   lwd = 2,
@@ -129,9 +131,7 @@ library(leaflet)
 library(leafem)
 library(leaflet.extras)
 
-arg <- sf::st_read("vector/arg.gpkg", quiet = TRUE)
-
-leaflet(arg) |>
+leaflet(sf::st_transform(arg, 4326)) |>
   setView(
     lng = -67.21083,
     lat = -40.41021,
@@ -204,6 +204,53 @@ tm_shape(arg) +
     col = "white"
   ) +
   tm_fullscreen()
+```
+
+## `mapview`
+
+```{r}
+library(mapview)
+pop <- arg$Provincia |>
+  tolower() |>
+  gsub(" ", "", x = _)
+
+pop <- dplyr::if_else(stringr::str_detect(pop, "fuego"), "tierradelfuego", pop)
+pop <- dplyr::if_else(stringr::str_detect(pop, "ciudad"), "caba", pop)
+pop <- stringr::str_replace_all(
+  pop,
+  c("í" = "i", "ó" = "o", "é" = "e", "á" = "a")
+)
+pop <- paste0(
+  "<i class='icono-arg-provincia-",
+  pop,
+  "' style='font-size: 3em;'></i>"
+)
+arg$Forma <- pop
+
+mapview(
+  arg,
+  legend = FALSE,
+  col.regions = "#75aee0",
+  color = "white",
+  lwd = 1,
+  alpha.regions = 1,
+  label = "Provincia",
+  highlight = list(
+    stroke = TRUE,
+    color = "white",
+    weight = 1,
+    opacity = 1,
+    fill = TRUE,
+    fillColor = "#f6b40e",
+    fillOpacity = 1
+  ),
+  popup = leafpop::popupTable(
+    arg,
+    zcol = "Forma",
+    row.numbers = FALSE,
+    feature.id = FALSE
+  )
+)
 ```
 
 :::
