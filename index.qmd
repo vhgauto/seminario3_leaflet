@@ -1,6 +1,6 @@
 ---
-title: "Interactive maps"
-subtitle: Part of **MS Víctor Gauto** [seminar](https://vhgauto.github.io/seminario3-gulich/) for Gulich Institute
+title: "Interactive maps with `R`"
+subtitle: Part of **MS Víctor Gauto** seminar [Better maps with coding](https://vhgauto.github.io/seminario3-gulich/) for Gulich Institute
 format: 
   html:
     embed-resources: true
